@@ -55,39 +55,117 @@ SCALE_POS_WEIGHT = 1.0 # default = 1.0, used only in binary, weight of labels wi
 ###### METRIC PARAMETERS
 METRIC = 'auc'
 
-PARAMS = {'objective': OBJECTIVE,
-          'boosting_type': BOOSTING_TYPE,
-          'num_iterations':NUM_ITERATIONS,
-          'learning_rate': LEARNING_RATE,
-          'num_threads': NUM_THREADS,
-          'device': DEVICE,
-          'seed': SEED,
-          'force_col_wise': FORCE_COL_WISE,
-          'force_row_wise':FORCE_ROW_WISE,
-          'max_depth': MAX_DEPTH, # max_depth
-          'num_leaves': NUM_LEAVES, #  2**max_depth
-          'min_data_in_leaf': MIN_DATA_IN_LEAF, # min_data_in_leaf
-          'min_sum_hessian_in_leaf': MIN_SUM_HESSIAN_IN_LEAF,
-          'bagging_fraction': BAGGING_FRACTION,
-          'pos_bagging_fraction': POS_BAGGING_FRACTION,
-          'neg_bagging_fraction': NEG_BAGGING_FRACTION,
-          'bagging_freq': BAGGING_FREQ,
-          'bagging_seed': BAGGING_SEED,
-          'feature_fraction': FEATURE_FRACTION,
-          'feature_fraction_bynode': FEATURE_FRACTION_BYNODE,
-          'feature_fraction_seed': FEATURE_FRACTION_SEED,
-          'early_stopping_round': EARLY_STOPPING,
-          'first_metric_only': FIRST_METRIC_ONLY,
-          'lambda_l1': LAMBDA_L1,
-          'lambda_l2': LAMBDA_L2,
-          'linear_lambda': LINEAR_LAMBDA,
-          'cat_l2': CAT_L2,
-          'cat_smooth': CAT_SMOOTH,
-          'max_bin': MAX_BIN,
-          'min_data_in_bin': MIN_DATA_IN_BIN,
-          'use_missing': USE_MISSING, 
-          'is_unbalance': IS_UNBALANCED,
-          'scale_pos_weight': SCALE_POS_WEIGHT,
-          'metric': METRIC,
-          'verbosity':VERBOSITY
-          }
+PARAMS_GB = { 'objective': OBJECTIVE,
+              'boosting_type': BOOSTING_TYPE,
+              'num_iterations':NUM_ITERATIONS,
+              'learning_rate': LEARNING_RATE,
+              'num_threads': NUM_THREADS,
+              'device': DEVICE,
+              'seed': SEED,
+              'force_col_wise': FORCE_COL_WISE,
+              'force_row_wise':FORCE_ROW_WISE,
+              'max_depth': MAX_DEPTH, # max_depth
+              'num_leaves': NUM_LEAVES, #  2**max_depth
+              'min_data_in_leaf': MIN_DATA_IN_LEAF, # min_data_in_leaf
+              'min_sum_hessian_in_leaf': MIN_SUM_HESSIAN_IN_LEAF,
+              'bagging_fraction': BAGGING_FRACTION,
+              'pos_bagging_fraction': POS_BAGGING_FRACTION,
+              'neg_bagging_fraction': NEG_BAGGING_FRACTION,
+              'bagging_freq': BAGGING_FREQ,
+              'bagging_seed': BAGGING_SEED,
+              'feature_fraction': FEATURE_FRACTION,
+              'feature_fraction_bynode': FEATURE_FRACTION_BYNODE,
+              'feature_fraction_seed': FEATURE_FRACTION_SEED,
+              'early_stopping_round': EARLY_STOPPING,
+              'first_metric_only': FIRST_METRIC_ONLY,
+              'lambda_l1': LAMBDA_L1,
+              'lambda_l2': LAMBDA_L2,
+              'linear_lambda': LINEAR_LAMBDA,
+              'cat_l2': CAT_L2,
+              'cat_smooth': CAT_SMOOTH,
+              'max_bin': MAX_BIN,
+              'min_data_in_bin': MIN_DATA_IN_BIN,
+              'use_missing': USE_MISSING, 
+              'is_unbalance': IS_UNBALANCED,
+              'scale_pos_weight': SCALE_POS_WEIGHT,
+              'metric': METRIC,
+              'verbosity':VERBOSITY
+              }
+
+
+############ RANDOM FOREST PARAMETERS ############
+
+PARAMS_RF = {'bootstrap': True,
+             'ccp_alpha': 0.0,
+             'class_weight': None,
+             'criterion': 'gini',
+             'max_depth': None,
+             'max_features': 'auto',
+             'max_leaf_nodes': None,
+             'max_samples': None,
+             'min_impurity_decrease': 0.0,
+             'min_samples_leaf': 1,
+             'min_samples_split': 2,
+             'min_weight_fraction_leaf': 0.0,
+             'n_estimators': 100,
+             'n_jobs': None,
+             'oob_score': False,
+             'random_state': SEED,
+             'verbose': 0,
+             'warm_start': False}
+
+
+############ LOGISTIC REGRESSION PARAMETERS ############
+
+PARAMS_LR = {'C': 1.0,
+             'class_weight': None,
+             'dual': False,
+             'fit_intercept': True,
+             'intercept_scaling': 1,
+             'l1_ratio': None,
+             'max_iter': 100,
+             'multi_class': 'auto',
+             'n_jobs': None,
+             'penalty': 'l2',
+             'random_state': SEED,
+             'solver': 'lbfgs',
+             'tol': 0.0001,
+             'verbose': 0,
+             'warm_start': False}
+
+############ MLP PARAMETERS ############
+
+PARAMS_MLP = {'activation': 'relu',
+             'alpha': 0.0001,
+             'batch_size': 'auto',
+             'beta_1': 0.9,
+             'beta_2': 0.999,
+             'early_stopping': False,
+             'epsilon': 1e-08,
+             'hidden_layer_sizes': (100, 100),
+             'learning_rate': 'constant',
+             'learning_rate_init': 0.001,
+             'max_fun': 15000,
+             'max_iter': 500,
+             'momentum': 0.9,
+             'n_iter_no_change': 10,
+             'nesterovs_momentum': True,
+             'power_t': 0.5,
+             'random_state': SEED,
+             'shuffle': True,
+             'solver': 'adam',
+             'tol': 1e-2,
+             'validation_fraction': 0.1,
+             'verbose': False,
+             'warm_start': False}
+
+############ KNN PARAMETERS ############
+
+PARAMS_KNN = {'algorithm': 'auto',
+             'leaf_size': 30,
+             'metric': 'minkowski',
+             'metric_params': None,
+             'n_jobs': None,
+             'n_neighbors': 10,
+             'p': 2,
+             'weights': 'uniform'}
