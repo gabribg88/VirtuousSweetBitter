@@ -36,7 +36,7 @@ The code will create a log file and an output folder containing:
 
 """
 
-__version__ = '0.1.2'
+__version__ = '0.1.0'
 __author__ = 'Virtuous Consortium'
 
 
@@ -55,8 +55,8 @@ import xmltodict
 # # Import Virtuous Library
 import Virtuous
 
-# Import testing_umami.py
-import testing_umami
+# Import the prediction function
+import XXXXX
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
