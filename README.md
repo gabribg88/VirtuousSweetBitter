@@ -45,3 +45,9 @@ The repository is organized in the following folders:
         conda install -c mordred-descriptor mordred
 
 Enjoy! 
+
+------------------
+## Acknowledgement
+------------------
+
+The present work has been developed as part of the VIRTUOUS project, funded by the European Union’s Horizon 2020 research and innovation program under the Marie Sklodowska-Curie-RISE Grant Agreement No 872181 (https://www.virtuoush2020.com/).
