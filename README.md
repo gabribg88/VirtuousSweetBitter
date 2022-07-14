@@ -18,7 +18,11 @@ The repository is organized in the following folders:
 > Collecting datasets of the work and related figures
 
 - notebook/
-> Collecting jupyter notebooks to explain the functionality of the VirtuousSweetBitter code and the processing steps followed in the work development
+> Collecting several jupyter notebooks: 
+ - ***"VirtuousSweetBitter.ipynb"*** allows to predict the bitter/sweet taste for a compound of interest by providing its SMILES, describing the                intermediate steps implemented within VirtuousSweetBitter.
+ - ***Notebooks 0-6*** provide the steps followed in the model implementation in order to allow the users to replicate the obtained results.
+ 
+ explain the functionality of the VirtuousSweetBitter code and the processing steps followed in the work development
 
 
 ### Authors
