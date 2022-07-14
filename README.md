@@ -7,6 +7,10 @@ The **VirtuosSweetBitter** tool predict the sweet/bitter taste of query molecule
 [Virtuous_image]: https://virtuoush2020.com/wp-content/uploads/2021/02/V_logo_h.png
 [Virtuous link]: https://virtuoush2020.com/
 
+### Publication 
+> Informed Classification of Sweeteners/Bitterants Compounds via Explainable Machine Learning
+> *Gabriele Maroni, Lorenzo Pallante, Giacomo Di Benedetto, Marco A. Deriu, Dario Piga, Gianvito Grasso*
+
 
 ### Repo Structure
 The repository is organized in the following folders:
