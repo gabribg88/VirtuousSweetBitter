@@ -11,18 +11,16 @@ The **VirtuosSweetBitter** tool predict the sweet/bitter taste of query molecule
 ### Repo Structure
 The repository is organized in the following folders:
 
+- notebook/
+> Collecting several jupyter notebooks: 
+> - ***"VirtuousSweetBitter.ipynb"*** allows to predict the bitter/sweet taste for a compound of interest by providing its SMILES. Each of the steps needed for the predictions is commented and briefly explained. 
+> - ***Notebooks 0-6*** provide the steps followed in the model implementation in order to allow the users to replicate the obtained results.
+
 - scripts/
 >Collecting python codes and sources files 
 
 - data/
 > Collecting datasets of the work and related figures
-
-- notebook/
-> Collecting several jupyter notebooks: 
-> - ***"VirtuousSweetBitter.ipynb"*** allows to predict the bitter/sweet taste for a compound of interest by providing its SMILES. Each of the steps needed for the predictions is commented and briefly explained. 
-> - ***Notebooks 0-6*** provide the steps followed in the model implementation in order to allow the users to replicate the obtained results.
- 
- explain the functionality of the VirtuousSweetBitter code and the processing steps followed in the work development
 
 
 ### Authors
