@@ -45,6 +45,7 @@ The repository is organized in the following folders:
         conda install -c mordred-descriptor mordred
 
 4. Export Environment variable (please adapt according to your installation path)
+
         export BABEL_DATADIR=~/anaconda3/pkgs/openbabel-3.1.1-py38hd2c4bc0_3/share/openbabel/3.1.0
 
 Enjoy! 
