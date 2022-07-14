@@ -7,16 +7,12 @@ The **VirtuosSweetBitter** tool predict the sweet/bitter taste of query molecule
 [Virtuous_image]: https://virtuoush2020.com/wp-content/uploads/2021/02/V_logo_h.png
 [Virtuous link]: https://virtuoush2020.com/
 
-### Publication 
-> Informed Classification of Sweeteners/Bitterants Compounds via Explainable Machine Learning
-> *Gabriele Maroni, Lorenzo Pallante, Giacomo Di Benedetto, Marco A. Deriu, Dario Piga, Gianvito Grasso*
-
+> *Gabriele Maroni, Lorenzo Pallante, Giacomo Di Benedetto, Marco A. Deriu, Dario Piga, Gianvito Grasso.* ***Informed Classification of Sweeteners/Bitterants Compounds via Explainable Machine Learning***
 
 ### Repo Structure
 The repository is organized in the following folders:
 
 - notebook/
-> Collecting several jupyter notebooks: 
 > - ***"VirtuousSweetBitter.ipynb"*** allows to test the developed model by predicting the bitter/sweet taste for a compound of interest from its SMILES representation. Each of the steps needed for the predictions is commented and briefly explained. 
 > - ***Notebooks 0-6*** provide the steps followed in the model implementation in order to allow the users to replicate the obtained results.
 
