@@ -6,7 +6,7 @@ The VirtuousSweetBitter tool predict the sweet/bitter taste of quey molecules ba
 This tool is mainly based on:
     1. VirtuousSweetBitter.py: a main script which calls the following functionalities
     2. Virtuous.py: library of preprocessing functionalities
-    3. XXXXXXX.py: prediction code
+    3. testing_sweetbitter.py: prediction code
 
 To learn how to run, just type:
 
@@ -14,7 +14,7 @@ To learn how to run, just type:
 
 usage: VirtuousSweetBitter.py [-h] [-s SMILES] [-f FILE] [-v VERBOSE]
 
-VirtuousSweetBitter: ML-based tool to predict the umami taste
+VirtuousSweetBitter: ML-based tool to predict the sweet/umami taste
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -31,8 +31,7 @@ To test the code you can submit an example txt file in the samples fodler (SMILE
 The code will create a log file and an output folder containing:
     1. "best_descriptors.csv": a csv file collecting the 12 best molecular descriptors for each processed smiles on which the prediction relies
     2. "descriptors.csv": a csv file collecting the molecular descriptors for each processed smiles
-    3. "result_labels": a txt file containing the predicted taste classes (umami/non-umami) for each processed smiles
-    4. "predictions.csv": a csv summarising the results of the prediction
+    3. "predictions.csv": a csv summarising the results of the prediction
 
 """
 
@@ -56,10 +55,12 @@ import xmltodict
 import Virtuous
 
 # Import the prediction function
-import XXXXX
+import testing_sweetbitter
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
+
+tstamp = time.strftime('%Y_%m_%d_%H_%M')
 
 if __name__ == "__main__":
 
@@ -77,26 +78,13 @@ if __name__ == "__main__":
 
     # --- Setting Folders and files ---
     # Stting files needed by the code
-    code_path = os.path.realpath(__file__)
-    root_dir_path = os.path.dirname(os.path.dirname(code_path))
-    src_path = os.path.dirname(code_path) + os.sep + "src" + os.sep
-    AD_file = src_path  + "umami_AD.pkl"
-    maximums_filename1 = src_path  + 'maximums.txt'
-    minimums_filename1 = src_path  + 'minimums.txt'
-    features_filename1 = src_path + 'features_list.txt'
-    best_features = src_path + 'umami_best_features.txt'
-    missing_imputation_method1 = 2
-    normalization_method1 = 1
-    model_filename1 = src_path  + 'models_3_5.zip'
-    selection_flag1 = 2
-    data_been_preprocessed_flag1 = 0
-    has_features_header1 = 1
-    has_samples_header1 = 1
-    training_labels_filename1 = src_path  + 'training_labels.txt'
-    length_of_features_from_training_filename1 = src_path  + 'length_of_features_from_training.txt'
-    tstamp = time.strftime('%Y_%m_%d_%H_%M')
-    selected_comorbidities_string1 = ""
-
+    scripts_path = os.path.dirname(os.path.realpath(__file__))
+    root_dir = os.path.dirname(scripts_path)
+    data_dir = root_dir + os.sep + "data" + os.sep 
+    models_dir = root_dir + os.sep + "models" + os.sep 
+    AD_file = data_dir + "bittersweet_AD_train.pkl"
+    
+    
     # Setting output folders and files
     if args.directory:
         output_folder1 = os.getcwd() + os.sep + args.directory + os.sep
@@ -104,9 +92,6 @@ if __name__ == "__main__":
         output_folder1 = os.getcwd() + os.sep + 'Output_folder_' + str(tstamp) + os.sep
     if not os.path.exists(output_folder1):
         os.makedirs(output_folder1)
-
-        testing_umami.initLogging()
-
 
     # --- Preprocessing (Virtuous.py) ---
 
@@ -136,14 +121,14 @@ if __name__ == "__main__":
     parent_smi = [i[2] for i in standard]
 
     # 1.4 Check the Applicability Domain (AD)
-    check_AD = [Virtuous.TestAD(smi, filename=AD_file, verbose = False, sim_threshold=0.4, neighbors = 5, metric = "tanimoto") for smi in parent_smi]
+    check_AD = [Virtuous.TestAD(smi, filename=AD_file, verbose = False, sim_threshold=0.21, neighbors = 5, metric = "tanimoto") for smi in parent_smi]
     test       = [i[0] for i in check_AD]
     score      = [i[1] for i in check_AD]
     sim_smiles = [i[2] for i in check_AD]
 
     # 1.5 Featurization: Calculation of the molecular descriptors
     #DescNames, DescValues = Virtuous.CalcDesc(parent_smi, Mordred=True, RDKit=False, pybel=False)
-    descs = [Virtuous.CalcDesc(smi, Mordred=True, RDKit=False, pybel=False) for smi in parent_smi]
+    descs = [Virtuous.CalcDesc(smi, Mordred=True, RDKit=True, pybel=True) for smi in parent_smi]
     DescValues = []
     for d in descs:
         DescValues.append(d[1])
@@ -151,35 +136,39 @@ if __name__ == "__main__":
     df = pd.DataFrame(data = DescValues, columns=DescNames)
     df.insert(loc=0, column='SMILES', value=parent_smi)
     df.to_csv(output_folder1 + "descriptors.csv", index=False)
+    
+    # remove eventual duplicated columns (same values from different libreries, i.e. Mordred, RDKit and pybel)
+    df = df.loc[:,~df.columns.duplicated()]
 
-    # save only the 12 best features on which the model relies
-    col = np.loadtxt(best_features, dtype="str")
-    col = np.insert(col, 0, "SMILES")
-    df_best = df[col]
+    # save only best descriptors    
+    features = ['BCUT2D_MRHI','AXp-6dv','piPC4','GATS1d','Kappa3','AATS7i','AATS8i','GATS2v','MATS1v','GATS2m','MATS2s','MATS2d','GATS3dv','GATS4dv',
+                'ATSC5c','ATSC5d','GATS6s','ATSC7dv','MPC5','BCUTi-1h','fr_Ndealkylation1','MINssO','MDEC-13','PEOE_VSA8','MINdO','BCUTdv-1l','fr_NH0',
+                'naHRing','SlogP_VSA10']
+        
+    df_best = df[['SMILES'] + features]
     df_best.to_csv(output_folder1 + "best_descriptors.csv", index=False)
 
     # --- Run the model (testing_umami.py) ---
-
-    testset_filename1 = output_folder1 + "descriptors.csv"
-
-    delim   = testing_umami.find_delimiter(testset_filename1)
-    dataset = testing_umami.preprocess_specific(testset_filename1, delim, output_folder1)
-    ret     = testing_umami.run_all(dataset, maximums_filename1, minimums_filename1,
-                  features_filename1, missing_imputation_method1, normalization_method1,
-                  model_filename1, selection_flag1, data_been_preprocessed_flag1, selected_comorbidities_string1,has_features_header1, has_samples_header1, training_labels_filename1, length_of_features_from_training_filename1, output_folder1)
-
-    testing_umami.logging.info("{}".format(ret[1]))
-
+    pred_label = []
+    pred_prob  = []
+    
+    for i in range(len(df)): 
+        label, prob = testing_sweetbitter.PredictExplain(df.iloc[i:i+1], make_plot=False, savefig=False, fname=None)
+        pred_label.append(label)
+        pred_prob.append(prob)
+        
 
     # --- Collect results --
     col_names = ["SMILES", "Check AD", "class", "probability"]
-    df = pd.read_csv(output_folder1 + "result_labels.txt", sep="\t", header=None)
-    df.insert(loc=0, column='Check AD', value=test)
-    df.insert(loc=0, column='SMILES', value=parent_smi)
-    df.columns = col_names
-    df.to_csv(output_folder1 + "predictions.csv", index=False)
+    #df = pd.read_csv(output_folder1 + "result_labels.txt", sep="\t", header=None)
+    results_df = pd.DataFrame()
+    results_df['SMILES'] = parent_smi
+    results_df['Check AD'] = test
+    results_df['Class'] = pred_label
+    results_df['Probability'] = pred_prob
+    results_df.to_csv(output_folder1 + "predictions.csv", index=False)
 
     if args.verbose:
         print("")
-        print (df)
+        print (results_df)
         print("")
