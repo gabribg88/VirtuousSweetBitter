@@ -42,7 +42,6 @@ import pickle
 from tqdm.notebook import tqdm
 import numpy as np
 import pandas as pd
-import shap
 from chembl_structure_pipeline import standardizer, checker
 from mordred import Calculator, descriptors
 import rdkit
@@ -54,13 +53,7 @@ import urllib.parse
 import urllib.request
 import sys
 import xmltodict
-from copy import deepcopy
-import itertools
-from pathlib import Path
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
-from utils import *
-import seaborn as sns
+
 
 # disable printing warning from RDKit
 rdkit.RDLogger.DisableLog('rdApp.*')
@@ -249,15 +242,6 @@ def Calc_Mordred (smiles, ignore_3D=False):
     """
     # check smile and generating RDKit molecule from smiles
     mol = ReadMol(smiles, verbose=False)
-
-    #######################################################
-    # TO BE REVISED --> 7 molecules of the DB failed with "Bad Conformed Id"
-    # build 3D coordinates if you want to compute 3D features as well
-    #if not ignore_3D:
-    #    mol=Chem.AddHs(mol)
-    #    Chem.AllChem.EmbedMolecule(mol, useRandomCoords=True, maxAttempts=5000)
-    #    Chem.AllChem.UFFOptimizeMolecule(mol)
-    ######################################################
 
     # Mordred descriptors
     calc = Calculator(descriptors, ignore_3D=ignore_3D)
@@ -634,121 +618,3 @@ def TestAD (query_smile, filename="AD.pkl", metric = "tanimoto", neighbors = 5, 
         if verbose:
             print ("*** WARNING ***\nThe query compound is OUTSIDE the Applicability Domain!")
         return False, similarity_score, np.array(similarity_smiles)
-
-    
-    
-def PredictExplain(sample_df, savefig=False):
-    ## Load data
-    with open('../data/comb.pickle', 'rb') as handle:
-        data = pickle.load(handle)
-    df, metadata, features, target, rows = data.values()
-    
-    ## Load models and explainers
-    with open('../models/models.pickle', 'rb') as handle:
-        models_explainers = pickle.load(handle)
-    models, explainers = models_explainers.values()
-    
-    ## Selected features
-    features = ['BCUT2D_MRHI','AXp-6dv','piPC4','GATS1d','Kappa3','AATS7i','AATS8i','GATS2v','MATS1v','GATS2m','MATS2s','MATS2d','GATS3dv','GATS4dv',
-                'ATSC5c','ATSC5d','GATS6s','ATSC7dv','MPC5','BCUTi-1h','fr_Ndealkylation1','MINssO','MDEC-13','PEOE_VSA8','MINdO','BCUTdv-1l','fr_NH0',
-                'naHRing','SlogP_VSA10']
-    
-    ## Train dataset (for plotting)
-    train = df.loc[rows,features+[target]].copy()
-    train.reset_index(drop=True, inplace=True)
-    train[target].replace({'Bitter': 0, 'Sweet': 1}, inplace=True)
-    
-    ## Compute oof predictions and explanations
-    oof_preds = np.zeros(len(models))
-    oof_shap_values = np.zeros((len(models), len(features)))
-    base_values = np.zeros(len(models))
-
-    for i, (model, explainer) in enumerate(zip(models, explainers)):
-        oof_preds[i] = model.predict(sample_df[features])
-        oof_shap_values[i,:] = explainer.shap_values(sample_df[features], check_additivity=True)
-        base_values[i] = explainer.expected_value
-    
-    ## Create Explanation object
-    shap_values = shap.Explanation(values=np.mean(oof_shap_values, axis=0),
-                                   base_values=np.mean(base_values),
-                                   data=sample_df[features].values.squeeze(),
-                                   feature_names=features
-                                  )
-    ## Plotting
-    FEATS_TO_DISPLAY = 10
-
-    shap_values_tmp = deepcopy(shap_values)
-
-    if shap_values_tmp.values.sum()+shap_values_tmp.base_values > 1:
-        d1 = 1.0 - shap_values_tmp.base_values
-        d2 = d1/shap_values_tmp.values.sum()
-        shap_values_tmp.values = d2*shap_values_tmp.values
-
-    fig = plt.figure(constrained_layout=True)
-    gs = gridspec.GridSpec(3, 6, figure=fig)
-
-    ### Shap profiles
-    ax2 = plt.subplot(gs[0:3, 0:3])
-    plt.sca(ax2) # set current axis
-    ax2.grid(zorder=0)
-    shap_waterfall(shap_values_tmp, max_display=FEATS_TO_DISPLAY, show=False)
-    fig.set_size_inches(12,7)
-
-    ### Feature distributions
-    indices = list(itertools.product([0,1,2], [3,4,5]))
-    tmp = pd.DataFrame({'shap_values': shap_values.values,
-                        'data': shap_values.data,
-                        'abs_shap_values': np.abs(shap_values.values)},
-                        index=shap_values.feature_names).dropna().sort_values('abs_shap_values', ascending=False).iloc[:9]
-    feats = tmp.index.tolist()
-    datas = tmp.data.values
-    axes = []
-
-    for idx,col,dat in zip(indices, feats, datas):
-        ax = plt.subplot(gs[idx])
-        axes.append(ax)
-        train_tmp = train.copy()
-        if col == 'BCUTi-1h':
-            train_tmp = train.dropna(subset=[col]).copy()
-            train_tmp[col] = train_tmp[col].clip(train_tmp[col].quantile(0.01), train_tmp[col].quantile(0.99))
-            bins = find_bins(train_tmp[col].values, 1)
-            train_tmp['bins'] = pd.cut(train_tmp[col], bins=bins, include_lowest=True)
-            train_tmp_grouped = train_tmp.groupby('bins', as_index=False)[col].mean()
-            train_tmp = pd.merge(train_tmp, train_tmp_grouped, how='left', on='bins', suffixes=(None, '_binned'))
-            sns.histplot(data=train_tmp, x=col+'_binned', hue=target, kde=False, stat='density', edgecolor='white', linewidth=0, alpha=0.4, line_kws=dict(linewidth=3), legend=False)
-            ax.set_xlabel(col)
-        elif col == 'fr_NH0':
-            train_tmp = train.dropna(subset=[col]).copy()
-            minx, maxx = train_tmp[col].min(), train_tmp[col].max()
-            sns.histplot(data=train_tmp, x=col, hue=target, kde=False, stat='density', edgecolor='white', linewidth=0, alpha=0.4, line_kws=dict(linewidth=3), bins=np.arange(minx-0.25, maxx+0.25, 0.5), legend=False)
-        elif col in ['PEOE_VSA8', 'MPC5']:
-            dic = {'PEOE_VSA8':5, 'MPC5':10}
-            train_tmp = train.dropna(subset=[col]).copy()
-            train_tmp[col] = train_tmp[col].clip(train_tmp[col].quantile(0.01), train_tmp[col].quantile(0.99))
-            minx, maxx = train_tmp[col].min(), train_tmp[col].max()
-            d = dic[col]
-            sns.histplot(data=train_tmp, x=col, hue=target, kde=True, stat='density', edgecolor='white', linewidth=0, alpha=0.4, line_kws=dict(linewidth=3), bins=np.arange(minx-d/2, maxx+d/2, d), legend=False)
-        else:
-            train_tmp[col] = train_tmp[col].clip(train_tmp[col].quantile(0.01), train_tmp[col].quantile(0.99))
-            sns.histplot(data=train_tmp, x=col, hue=target, kde=True, stat='density', edgecolor='white', linewidth=0, alpha=0.4, line_kws=dict(linewidth=3), ax=ax, legend=False)
-
-        ax.axvline(dat, color='r')
-        ax.set_ylabel(None)
-        ax.xaxis.get_label().set_fontsize(13)
-        ax.tick_params(axis='y', which='major', labelsize=0, left=False)
-        ax.tick_params(axis='y', which='minor', labelsize=0, left=False)
-        ax.tick_params(axis='x', which='major', labelsize=10)
-        ax.tick_params(axis='x', which='minor', labelsize=8)
-    
-    pred_prob = shap_values_tmp.base_values + shap_values_tmp.values.sum()
-    pred_label = 'Sweet' if pred_prob >= 0.5 else 'Bitter'
-    if pred_label == 'Sweet':
-        plt.suptitle(fr'$\bfSHAP\,\,values\,\,for:\,\,$ {sample_df.SMILES.values[0]}''\n'fr'$\bfPrediction:\,\,$ {pred_label} with {pred_prob.round(3)} probability',
-                     fontsize=14, ha='center')
-    else:
-        plt.suptitle(fr'$\bfSHAP\,\,values\,\,for:\,\,$ {sample_df.SMILES.values[0]}''\n'fr'$\bfPrediction:\,\,$ {pred_label} with {1-pred_prob.round(3)} probability',
-                     fontsize=14, ha='center');
-    if savefig:
-        PATH = os.path.join('..', 'images')
-        Path(PATH).mkdir(parents=True, exist_ok=True)
-        fig.savefig(os.path.join(PATH, f'SHAP_{sample_df.SMILES.values[0]}.png'), dpi=fig.dpi)
