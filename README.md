@@ -44,7 +44,7 @@ The repository is organized in the following folders:
 
         conda install -c conda-forge rdkit chembl_structure_pipeline openbabel
         conda install -c mordred-descriptor mordred
-        pip install -r requiremets.txt
+        pip install -r requirements.txt
 
 4. Export Environment variable (please adapt according to your installation path)
 
