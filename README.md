@@ -50,8 +50,44 @@ The repository is organized in the following folders:
 
         export BABAL_DATADIR=~/anaconda3/pkgs/openbabel-3.1.1-py38h3d1cf2f_4/share/openbabel/3.1.0
 
-
 Enjoy! 
+
+
+---------------------------------
+## How to use VirtuousSweetBitter
+---------------------------------
+
+The main code is `VirtuousSweetBitter.py` within the scripts folder.
+
+To learn how to run, just type:
+
+    python VirtuousSweetBitter.py --help
+
+And this will print the help message of the program:
+
+    usage: VirtuousUmami.py [-h] [-c COMPOUND] [-f FILE] [-d DIRECTORY] [-v]
+
+    VirtuousUmami: ML-based tool to predict the sweet/bitter taste
+
+    optional arguments:
+      -h, --help            show this help message and exit
+
+      -c COMPOUND, --compound COMPOUND
+                        query compound (allowed file types are SMILES, FASTA, Inchi, PDB, Sequence, Smarts, pubchem name)
+
+      -f FILE, --file FILE  text file containing the query molecules
+
+      -d DIRECTORY, --directory DIRECTORY name of the output directory
+
+      -v, --verbose         Set verbose mode
+
+To test the code you can submit an example txt file in the "samples" fodler (test.txt)      
+
+The code will create a log file and an output folder containing:
+
+    1. "best_descriptors.csv": a csv file collecting the 12 best molecular descriptors for each processed smiles on which the prediction relies
+    2. "descriptors.csv": a csv file collecting all the calculated molecular descriptors for each processed smiles
+    3. "predictions.csv": a csv summarising the results of the prediction
 
 ------------------
 ## Acknowledgement
