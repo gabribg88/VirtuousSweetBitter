@@ -65,7 +65,7 @@ To learn how to run, just type:
 
 And this will print the help message of the program:
 
-    usage: VirtuousUmami.py [-h] [-c COMPOUND] [-f FILE] [-d DIRECTORY] [-v]
+    usage: VirtuousSweetBitter.py [-h] [-c COMPOUND] [-f FILE] [-d DIRECTORY] [-v]
 
     VirtuousUmami: ML-based tool to predict the sweet/bitter taste
 
@@ -85,7 +85,7 @@ To test the code you can submit an example txt file in the "samples" fodler (tes
 
 The code will create a log file and an output folder containing:
 
-    1. "best_descriptors.csv": a csv file collecting the 12 best molecular descriptors for each processed smiles on which the prediction relies
+    1. "best_descriptors.csv": a csv file collecting the 29 best molecular descriptors for each processed smiles on which the prediction relies
     2. "descriptors.csv": a csv file collecting all the calculated molecular descriptors for each processed smiles
     3. "predictions.csv": a csv summarising the results of the prediction
 
