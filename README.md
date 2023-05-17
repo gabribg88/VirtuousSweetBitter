@@ -7,7 +7,8 @@ The **VirtuosSweetBitter** tool predict the sweet/bitter taste of query molecule
 [Virtuous_image]: https://virtuoush2020.com/wp-content/uploads/2021/02/V_logo_h.png
 [Virtuous link]: https://virtuoush2020.com/
 
-> *Gabriele Maroni, Lorenzo Pallante, Giacomo Di Benedetto, Marco A. Deriu, Dario Piga, Gianvito Grasso.* ***Informed Classification of Sweeteners/Bitterants Compounds via Explainable Machine Learning***
+>Maroni, G., Pallante, L., Di Benedetto, G., Deriu, M. A., Piga, D., & Grasso, G. (2022). Informed classification of sweeteners/bitterants compounds via explainable machine learning. Current Research in Food Science, 5, 2270–2280. https://doi.org/10.1016/j.crfs.2022.11.014
+
 
 ### Repo Structure
 The repository is organized in the following folders:
