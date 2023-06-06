@@ -53,7 +53,7 @@ The repository is organized in the following folders:
 
 4. Export Environment variable (please adapt according to your installation path)
 
-        export BABAL_DATADIR=~/anaconda3/pkgs/openbabel-3.1.1-py38h3d1cf2f_4/share/openbabel/3.1.0
+        export BABEL_DATADIR=~/anaconda3/pkgs/openbabel-3.1.1-py38h3d1cf2f_4/share/openbabel/3.1.0
 
 Enjoy! 
 
