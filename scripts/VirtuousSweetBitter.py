@@ -21,6 +21,7 @@ optional arguments:
   -c COMPOUND, --compound COMPOUND
                         query compound (allowed file types are SMILES, FASTA, Inchi, PDB, Sequence, Smarts, pubchem name)
   -f FILE, --file FILE  text file containing SMILES of the query molecules
+  -t TYPE, --type TYPE  type of the input file (SMILES, FASTA, Inchi, PDB, Sequence, Smarts, pubchem name). If not specified, an automatic recognition of the input format will be tried
   -d DIRECTORY, --directory DIRECTORY
                         name of the output directory
   -v VERBOSE, --verbose VERBOSE
@@ -68,6 +69,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='VirtuousSweetBitter: ML-based tool to predict the umami taste')
     parser.add_argument('-c','--compound',help="query compound (allowed file types are SMILES, FASTA, Inchi, PDB, Sequence, Smarts, pubchem name)",default=None)
     parser.add_argument('-f','--file',help="text file containing the query molecules",default=None)
+    parser.add_argument('-t', '--type', help="type of the input file (SMILES, FASTA, Inchi, PDB, Sequence, Smarts, pubchem name). If not specified, an automatic recognition of the input format will be tried", default=None)
     parser.add_argument('-d','--directory',help="name of the output directory",default=None)
     parser.add_argument('-v','--verbose',help="Set verbose mode", default=False, action='store_true')
     args = parser.parse_args()
@@ -111,7 +113,7 @@ if __name__ == "__main__":
         sys.exit("\n***ERROR!***\nPlease provide a SMILES or a txt file containing a list of SMILES!\nUse python ../VirtuousSweetBitter.py --help for further information\n")
 
     # 1.2 Import compound as a molecule object
-    mol = [Virtuous.ReadMol(cpnd, verbose=args.verbose) for cpnd in query_cpnd]
+    mol = [Virtuous.ReadMol(cpnd, type=args.type, verbose=args.verbose) for cpnd in query_cpnd]
 
     # 1.3 Standardise molecule with the ChEMBL structure pipeline (https://github.com/chembl/ChEMBL_Structure_Pipeline)
     standard = [Virtuous.Standardize(m) for m in mol]
